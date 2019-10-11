@@ -8,6 +8,8 @@
 	<link rel="stylesheet" type="text/css" href="css/normalize.css" />
 	<link rel="stylesheet" type="text/css" href="css/default.css">
 	<link rel="stylesheet" type="text/css" href="http://unpkg.com/iview/dist/styles/iview.css">
+	<link rel="stylesheet" type="text/css" href="css/demo.css" />
+	<link rel="stylesheet" type="text/css" href="css/component.css" />
 	<style type="text/css">
 		*{
 			padding: 0;
@@ -106,7 +108,7 @@
 										<i-input v-model="money" number
 											style="width:300px;" placeholder="实际付款的金额" /></div>
 									<h2 style="text-align:center;margin:20px 100px 20px 0;">每人点单金额</h2>
-									<div v-for='(item,index) in people_list' :key='index + "num"' style="margin-bottom:20px;font-weight: bold;">
+									<!-- <div v-for='(item,index) in people_list' :key='index + "num"' style="margin-bottom:20px;font-weight: bold;">
 											{{item.name}}：
 											<label>
 												<i-input v-model="item.money"
@@ -114,7 +116,14 @@
 											</label>
 											&nbsp;
 											<i-button type="error" @click='remove(index)'>删除</i-button>
-									</div>
+									</div> -->
+									<span class="input input--minoru" v-for='(item,index) in people_list' :key='index + "num"'>
+										<input v-model="item.money" placeholder="各自的金额，没点不需要填写" class="input__field input__field--yoko" type="text" id="input-16" />
+										<label class="input__label input__label--yoko" for="input-16">
+											<span class="input__label-content input__label-content--yoko">{{item.name}}</span>
+										</label>
+										<i-button type="error" @click='remove(index)'>删除</i-button>
+									</span>
 									<div style="display:flex;margin-bottom:30px; justify-content: center; align-items: center;">
 										<span style="flex:none;">新增成员：</span><i-input type="text" v-model='add_name' ></i-input>
 										&nbsp;&nbsp;<i-button type="primary" @click='add_people'>+</i-button>
@@ -139,6 +148,38 @@
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 	<script type="text/javascript" src="http://unpkg.com/iview/dist/iview.min.js"></script>
 	<script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="js/classie.js"></script>
+	<script type="text/javascript">
+		(function() {
+			if (!String.prototype.trim) {
+				(function() {
+					// Make sure we trim BOM and NBSP
+					var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+					String.prototype.trim = function() {
+						return this.replace(rtrim, '');
+					};
+				})();
+			}
+			[].slice.call( document.querySelectorAll( 'input.input__field' ) ).forEach( function( inputEl ) {
+				// in case the input is already filled..
+				if( inputEl.value.trim() !== '' ) {
+					classie.add( inputEl.parentNode, 'input--filled' );
+				}
+
+				// events:
+				inputEl.addEventListener( 'focus', onInputFocus );
+				inputEl.addEventListener( 'blur', onInputBlur );
+			} );
+			function onInputFocus( ev ) {
+				classie.add( ev.target.parentNode, 'input--filled' );
+			}
+			function onInputBlur( ev ) {
+				if( ev.target.value.trim() === '' ) {
+					classie.remove( ev.target.parentNode, 'input--filled' );
+				}
+			}
+		})();
+	</script>
 	<script type="text/javascript">
 	+function ($) {
 		var gl;
