@@ -94,6 +94,20 @@
 		}
 		.app{
 		}
+    .input__label--yoko::before{
+      display: none;
+    }
+    .input.input--kaede{
+      margin: 10px 0;
+      height: 50px;
+      line-height: 10px;
+    }
+    .input__label--yoko::after{
+      background: #03c3d7;
+    }
+    .input__field.input__field--yoko{
+      background: #03c3d7;
+    }
 	</style>
 </head>
 <body>
@@ -103,27 +117,18 @@
 						<Row class="flex-box">
 							<div class="box">
 								<div class="inline-flex">
-									<h2 style="text-align:center;margin:15px 110px 15px 0;">总收款金额</h2>
+									<!-- <h2 style="text-align:center;margin:15px 110px 15px 0;">总收款金额</h2> -->
 									<div style="margin-bottom:15px;font-weight: bold;">实际付款金额：
 										<i-input v-model="money" number
 											style="width:300px;" placeholder="实际付款的金额" /></div>
 									<h2 style="text-align:center;margin:20px 100px 20px 0;">每人点单金额</h2>
-									<!-- <div v-for='(item,index) in people_list' :key='index + "num"' style="margin-bottom:20px;font-weight: bold;">
-											{{item.name}}：
-											<label>
-												<i-input v-model="item.money"
-												style="width:300px;" number placeholder="各自的金额，没点不需要填写" />
-											</label>
-											&nbsp;
-											<i-button type="error" @click='remove(index)'>删除</i-button>
-									</div> -->
-									<span class="input input--minoru" v-for='(item,index) in people_list' :key='index + "num"'>
-										<input v-model="item.money" placeholder="各自的金额，没点不需要填写" class="input__field input__field--yoko" type="text" id="input-16" />
-										<label class="input__label input__label--yoko" for="input-16">
-											<span class="input__label-content input__label-content--yoko">{{item.name}}</span>
-										</label>
-										<i-button type="error" @click='remove(index)'>删除</i-button>
-									</span>
+                        <span class="input input--kaede" v-for='(item,index) in people_list' :key='index + "num"'>
+                            <input  v-model="item.money" placeholder="每人点单金额，没点不需要填" class="input__field input__field--kaede" type="text" :id="forid(index)" />
+                            <label class="input__label input__label--kaede" :for="forid(index)">
+                              <span class="input__label-content input__label-content--kaede">{{item.name}}</span>
+                            </label>
+                             <i-button style="position: absolute;right: 5px;top: 10px;" type="error" @click='remove(index)'>删除</i-button>
+                          </span>
 									<div style="display:flex;margin-bottom:30px; justify-content: center; align-items: center;">
 										<span style="flex:none;">新增成员：</span><i-input type="text" v-model='add_name' ></i-input>
 										&nbsp;&nbsp;<i-button type="primary" @click='add_people'>+</i-button>
@@ -807,6 +812,9 @@
 						})
 			},
 			methods: {
+        forid (id) {
+          return "input-" + id
+        },
 				remove (index) {
 					this.people_name.splice(index,1)
 					this.people_list.splice(index,1)
