@@ -4,12 +4,10 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>收钱-水纹版（Beta1.0）</title>
-	<link rel="stylesheet" type="text/css" href="css/normalize.css" />
-	<link rel="stylesheet" type="text/css" href="css/default.css">
-	<link rel="stylesheet" type="text/css" href="http://unpkg.com/iview/dist/styles/iview.css">
+	<title>收钱-水纹版（Beta2.0）</title>
 	<link rel="stylesheet" type="text/css" href="css/demo.css" />
-	<link rel="stylesheet" type="text/css" href="css/component.css" />
+	<link rel="stylesheet" type="text/css" href="css/loaders.css"/>
+	<link rel="stylesheet" type="text/css" href="http://unpkg.com/iview/dist/styles/iview.css">
 	<style type="text/css">
 		*{
 			padding: 0;
@@ -29,6 +27,9 @@
 			width: 100vw;
 			height: 100vh;
 			text-align: center;
+		}
+		[v-cloak] {
+			display: none;
 		}
 		.flex-box {
 			position: relative;
@@ -94,98 +95,98 @@
 		}
 		.app{
 		}
-    .input__label--yoko::before{
-      display: none;
-    }
-    .input.input--kaede{
-      margin: 10px 0;
-      height: 50px;
-      line-height: 10px;
-    }
-    .input__label--yoko::after{
-      background: #03c3d7;
-    }
-    .input__field.input__field--yoko{
-      background: #03c3d7;
-    }
+		.input__label--yoko::before{
+		display: none;
+		}
+		.input.input--kaede{
+		margin: 10px 0;
+		height: 40px;
+		line-height: 7px;
+		}
+		.input__label--yoko::after{
+		background: #03c3d7;
+		}
+		.input__field.input__field--yoko{
+		background: #03c3d7;
+		}
+		.input__label--kaede{
+			font-size: 16px;
+			line-height: 40px;
+		}
+		.input__label-content--kaede{
+			padding: 0;
+		}
 	</style>
 </head>
-<body>
-		<div id="app" class="app">
-				<div class="htmleaf-container">
-					<header class="htmleaf-header">
-						<Row class="flex-box">
-							<div class="box">
-								<div class="inline-flex">
-									<!-- <h2 style="text-align:center;margin:15px 110px 15px 0;">总收款金额</h2> -->
-									<div style="margin-bottom:15px;font-weight: bold;">实际付款金额：
-										<i-input v-model="money" number
-											style="width:300px;" placeholder="实际付款的金额" /></div>
-									<h2 style="text-align:center;margin:20px 100px 20px 0;">每人点单金额</h2>
-                        <span class="input input--kaede" v-for='(item,index) in people_list' :key='index + "num"'>
-                            <input  v-model="item.money" placeholder="每人点单金额，没点不需要填" class="input__field input__field--kaede" type="text" :id="forid(index)" />
-                            <label class="input__label input__label--kaede" :for="forid(index)">
-                              <span class="input__label-content input__label-content--kaede">{{item.name}}</span>
-                            </label>
-                             <i-button style="position: absolute;right: 5px;top: 10px;" type="error" @click='remove(index)'>删除</i-button>
-                          </span>
-									<div style="display:flex;margin-bottom:30px; justify-content: center; align-items: center;">
-										<span style="flex:none;">新增成员：</span><i-input type="text" v-model='add_name' ></i-input>
-										&nbsp;&nbsp;<i-button type="primary" @click='add_people'>+</i-button>
-									</div>
-									<div class="btn" @click="new_shouqian">收钱</div>
+<body style="position: relative;">
+	<main style="width: 100vw;height: 100vh;z-index: 9999;background: #000;">
+		<div class="loaders" style="position: absolute;top:50%;left:50%;">
+			<div class="loader">
+				<div class="loader-inner pacman">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+			</div>
+
+		</div>
+	</main>
+	<div id="app" class="app" v-cloak>
+			<div class="htmleaf-container">
+				<header class="htmleaf-header">
+					<Row class="flex-box">
+						<div class="box">
+							<div class="inline-flex">
+								<div style="margin:15px 0;font-weight: bold;">实际付款金额：
+									<i-input v-model="money" number
+										style="width:300px;" placeholder="实际付款的金额" /></div>
+								<h2 style="text-align:center;margin:0 130px 10px 0;">每人点单金额</h2>
+					<span class="input input--kaede" v-for='(item,index) in people_list' :key='index + "num"'>
+						<input  v-model="item.money" placeholder="每人点单金额，没点不需要填" class="input__field input__field--kaede" type="text" :id="forid(index)" />
+						<label class="input__label input__label--kaede" :for="forid(index)">
+							<span class="input__label-content input__label-content--kaede">{{item.name}}</span>
+						</label>
+							<i-button style="position: absolute;right: 5px;top: 4px;" type="error" @click='remove(index)'>删除</i-button>
+						</span>
+								<div style="display:flex;margin-bottom:30px; justify-content: center; align-items: center;">
+									<b style="flex:none;color:#6A7989;">新增成员：</b><i-input type="text" v-model='add_name' ></i-input>
+									&nbsp;&nbsp;<i-button type="primary" @click='add_people'>+</i-button>
 								</div>
-							</div>
-						</Row>
-						<div v-if="shouqianma" style="margin-top:30px;" class="shouqian">
-							<div class="flexbox">
-								<div class="flexitem" v-for="item in collect_name" :key="item + 'name'">{{item}}</div>
-							</div>
-							<div class="flexbox">
-								<div class="flexitem" v-for="(item,index) in collect" :key="index + 'money'">{{item}}
-								</div>
+								<div class="btn" @click="new_shouqian">收钱</div>
 							</div>
 						</div>
-					</header>
-				</div>
-		</div>
-	<script src="js/jquery-2.1.0.min.js"></script>
+					</Row>
+					<div v-if="shouqianma" style="margin-top:30px;" class="shouqian">
+						<div class="flexbox">
+							<div class="flexitem" v-for="item in collect_name" :key="item + 'name'">{{item}}</div>
+						</div>
+						<div class="flexbox">
+							<div class="flexitem" v-for="(item,index) in collect" :key="index + 'money'">{{item}}
+							</div>
+						</div>
+					</div>
+				</header>
+			</div>
+	</div>
+	<script>
+		document.onreadystatechange = completeLoading;
+		function completeLoading() {
+			if (document.readyState == "complete") {
+				var loadingMask = document.querySelector('main');
+				loadingMask.parentNode.removeChild(loadingMask);
+			}
+		}
+		document.addEventListener('DOMContentLoaded', function () {
+			document.querySelector('main').className += 'loaded';
+		});
+	</script>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 	<script type="text/javascript" src="http://unpkg.com/iview/dist/iview.min.js"></script>
 	<script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script src="js/classie.js"></script>
-	<script type="text/javascript">
-		(function() {
-			if (!String.prototype.trim) {
-				(function() {
-					// Make sure we trim BOM and NBSP
-					var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
-					String.prototype.trim = function() {
-						return this.replace(rtrim, '');
-					};
-				})();
-			}
-			[].slice.call( document.querySelectorAll( 'input.input__field' ) ).forEach( function( inputEl ) {
-				// in case the input is already filled..
-				if( inputEl.value.trim() !== '' ) {
-					classie.add( inputEl.parentNode, 'input--filled' );
-				}
-
-				// events:
-				inputEl.addEventListener( 'focus', onInputFocus );
-				inputEl.addEventListener( 'blur', onInputBlur );
-			} );
-			function onInputFocus( ev ) {
-				classie.add( ev.target.parentNode, 'input--filled' );
-			}
-			function onInputBlur( ev ) {
-				if( ev.target.value.trim() === '' ) {
-					classie.remove( ev.target.parentNode, 'input--filled' );
-				}
-			}
-		})();
-	</script>
-	<script type="text/javascript">
+	<script type="text/javascript"> // bg
 	+function ($) {
 		var gl;
 		var $window = $(window);
@@ -225,7 +226,6 @@
 				throw new Error('link error: ' + gl.getProgramInfoLog(program.id));
 			}
 
-			// Fetch the uniform and attribute locations
 			program.uniforms = {};
 			program.locations = {};
 			gl.useProgram(program.id);
@@ -328,7 +328,6 @@
 
 			this.running = true;
 
-			// Init GL stuff
 			this.quad = gl.createBuffer();
 			gl.bindBuffer(gl.ARRAY_BUFFER, this.quad);
 			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -340,7 +339,6 @@
 			
 			this.initShaders();
 			
-			// Init textures
 			var image = new Image;
 			image.crossOrigin = '';
 			image.onload = function() {
@@ -367,14 +365,12 @@
 				
 				that.backgroundTexture = texture;
 				
-				// Everything loaded successfully - hide the CSS background image
 				that.$el.css('backgroundImage', 'none');
 			};
 			image.src = backgroundUrl;
 			
 			this.visible = true;
 			
-			// Init animation
 			function step() {
 				that.step();
 				requestAnimationFrame(step);
@@ -449,14 +445,11 @@
 				var backgroundAttachment = this.$el.css('background-attachment');
 				var backgroundPosition = this.$el.css('background-position').split(' ');
 
-				// Here the 'window' is the element which the background adapts to 
-				// (either the chrome window or some element, depending on attachment)
 				var parElement = backgroundAttachment == 'fixed' ? $window : this.$el;
 				var winOffset = parElement.offset() || {left: pageXOffset, top: pageYOffset};
 				var winWidth = parElement.innerWidth();
 				var winHeight = parElement.innerHeight();
 
-				// TODO: background-clip
 				if (backgroundSize == 'cover') {
 					var scale = Math.max(winWidth / this.backgroundWidth, winHeight / this.backgroundHeight);
 					
@@ -490,7 +483,6 @@
 					}
 				}
 				
-				// Compute backgroundX and backgroundY in page coordinates
 				var backgroundX = backgroundPosition[0] || '';
 				var backgroundY = backgroundPosition[1] || backgroundX;
 				
@@ -677,10 +669,8 @@
 
 				gl.viewport(0, 0, this.resolution, this.resolution);
 				
-				// Render onto texture/framebuffer 0
 				gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers[0]);
 				
-				// Using texture 1
 				bindTexture(this.textures[1]);
 
 				gl.useProgram(this.dropProgram.id);
@@ -690,14 +680,12 @@
 				
 				this.drawQuad();
 				
-				// Switch textures
 				var t = this.framebuffers[0]; this.framebuffers[0] = this.framebuffers[1]; this.framebuffers[1] = t;
 				t = this.textures[0]; this.textures[0] = this.textures[1]; this.textures[1] = t;
 				
 				gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 			},
 			
-			// Actions
 			destroy: function() {
 				this.canvas.remove();
 				this.$el.off('.ripples');
@@ -736,8 +724,6 @@
 			}
 		};
 
-		// RIPPLES PLUGIN DEFINITION
-		// ==========================
 
 		var old = $.fn.ripples;
 
@@ -760,8 +746,6 @@
 		$.fn.ripples.Constructor = Ripples;
 
 
-		// RIPPLES NO CONFLICT
-		// ====================
 
 		$.fn.ripples.noConflict = function() {
 			$.fn.ripples = old;
@@ -771,133 +755,142 @@
 }(window.jQuery);
 
 	</script>
-	<script>
-	$(document).ready(function() {
-		new Vue({
-			el: '#app',
-			data: {
-				people_list:[],
-				people_name:[],
-				add_name:'',
-				money: '',
-				shouqianma: false,
-				collect_name: [],
-				collect: [],
-				data:''
-			},
-			created () {
-				axios({
-						method:'get',
-						url:'data.txt',
-						}).then(res => {
-							// console.log(res.data[0])
-							if(res.data !== ''){
-								if(res.data.indexOf(',') === -1 && res.data.indexOf(',') === 0){
-									this.people_name.push(res.data)
+	<script type="text/javascript"> // body
+		$(document).ready(function() {
+			new Vue({
+				el: '#app',
+				data: {
+					people_list:[],
+					people_name:[],
+					add_name:'',
+					money: '',
+					shouqianma: false,
+					collect_name: [],
+					collect: [],
+					data:''
+				},
+				created () {
+					axios({
+					method:'get',
+					url:'data.txt',
+					}).then(res => {
+						if(res.data !== ''){
+							if(res.data.indexOf(',') === -1 && res.data.indexOf(',') === 0){
+								this.people_name.push(res.data)
+								this.people_list.push({
+									name:res.data,
+									money:''
+								})
+							} else {
+								this.data = res.data
+								this.people_name = res.data.split(',')
+								this.people_name.forEach(item => {
 									this.people_list.push({
-										name:res.data,
+										name:item,
 										money:''
 									})
-								} else {
-									this.data = res.data
-									this.people_name = res.data.split(',')
-									this.people_name.forEach(item => {
-										this.people_list.push({
-											name:item,
-											money:''
-										})
-									})
-								}
+								})
 							}
-						})
-			},
-			methods: {
-        forid (id) {
-          return "input-" + id
-        },
-				remove (index) {
-					this.people_name.splice(index,1)
-					this.people_list.splice(index,1)
-					send = this.people_name.join(',')
-					axios({
-						method:'get',
-						url:'collect.php',
-						params:{
-							editor:send
 						}
-					}).then(res => {
-						console.log(res.config)
 					})
 				},
-				add_people () {
-					if(this.add_name !== ''){
-						this.people_name.push(this.add_name)
-						this.people_list.push({
-							name:this.add_name,
-							money:''
-						})
-						send = this.people_name.join(',')
-						axios({
-							method:'get',
-							url:'collect.php',
-							params:{
-								editor:send
-							}
-						}).then(res => {
-							this.add_name = ''
-						})
-					} else {
-						this.$Message.error('请输入新增成员姓名')
-					}
-				},	
-				new_shouqian() {
-					if (this.money !== '') {
-						this.collect_name = this.people_name
-						this.collect = []
-						this.people_list.forEach(item => {
-							this.collect.push(item.money)
-						})
-						this.collect.forEach((item, index) => {
-							if (item === '') {
-								this.collect[index] = 0
+				methods: {
+					forid (id) {
+						return "input-" + id
+					},
+					remove (index) {
+						this.$Modal.confirm({
+							title: '确定要删除吗？',
+							onOk: () => {
+								this.people_name.splice(index,1)
+								this.people_list.splice(index,1)
+								send = this.people_name.join(',')
+								axios({
+									method:'get',
+									url:'collect.php',
+									params:{
+										editor:send
+									}
+								}).then(res => {
+									console.log(res.config)
+								})
 							}
 						})
-						let total = 0
-						this.collect.forEach((item, index) => {
-							total += Number(item)
-						})
-						this.collect.forEach((item, index) => {
-							this.collect[index] = ((Number(item) / total) * Number(this.money)).toFixed(2)
-						})
-						this.boxmove(-document.querySelector('.flex-box').offsetHeight - 100)
-						this.shouqianma = true
-					} else {
-						this.$Message.error('请填写总金额')
-					}
-				},
-				boxmove (target) {
-					let box = document.querySelector('.flex-box')
-					let timer = null
-					clearInterval(timer)
-					timer = setInterval(() => {
-						let speed = (target-box.offsetTop) / 5
-						speed = speed > 0 ? Math.ceil(speed):Math.floor(speed)
-						if(box.offsetLeft == target){
-							clearInterval(timer)
+					},
+					add_people () {
+						if(this.add_name !== ''){
+								this.$Modal.confirm({
+									title: '确定添加吗？',
+									onOk: () => {
+										this.people_name.push(this.add_name)
+										this.people_list.push({
+											name:this.add_name,
+											money:''
+										})
+										send = this.people_name.join(',')
+										axios({
+											method:'get',
+											url:'collect.php',
+											params:{
+												editor:send
+											}
+										}).then(res => {
+											this.add_name = ''
+										})
+									}
+								})
 						} else {
-							box.style.top = box.offsetTop+speed+"px"
+							this.$Message.error('请输入新增成员姓名')
 						}
-					},50)
+					},	
+					new_shouqian() {
+						if (this.money !== '') {
+							this.collect_name = this.people_name
+							this.collect = []
+							this.people_list.forEach(item => {
+								this.collect.push(item.money)
+							})
+							this.collect.forEach((item, index) => {
+								if (item === '') {
+									this.collect[index] = 0
+								}
+							})
+							let total = 0
+							this.collect.forEach((item, index) => {
+								total += Number(item)
+							})
+							this.collect.forEach((item, index) => {
+								this.collect[index] = ((Number(item) / total) * Number(this.money)).toFixed(2)
+							})
+							this.boxmove(-document.querySelector('.flex-box').offsetHeight - 100)
+							this.shouqianma = true
+						} else {
+							this.$Message.error('请填写总金额')
+						}
+					},
+					boxmove (target) {
+						let box = document.querySelector('.flex-box')
+						let timer = null
+						clearInterval(timer)
+						timer = setInterval(() => {
+							let speed = (target-box.offsetTop) / 10
+							speed = speed > 0 ? Math.ceil(speed):Math.floor(speed)
+							if(box.offsetLeft == target){
+								clearInterval(timer)
+							} else {
+								box.style.top = box.offsetTop+speed+"px"
+							}
+						},50)
+					}
 				}
-			}
-		})
-			$('body').ripples({
-				resolution: 512,
-				dropRadius: 20,
-				perturbance: 0.06,
-				interactive:true
-			});
-	});
+			})
+				$('body').ripples({
+					resolution: 512,
+					dropRadius: 20,
+					perturbance: 0.06,
+					interactive:true
+				});
+		});
 	</script>
 </body>
 </html>
