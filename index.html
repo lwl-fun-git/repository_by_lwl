@@ -93,8 +93,6 @@
 			top: 35%;
 			color:#fff;
 		}
-		.app{
-		}
 		.input__label--yoko::before{
 		display: none;
 		}
@@ -133,42 +131,58 @@
 
 		</div>
 	</main>
-	<div id="app" class="app" v-cloak>
-			<div class="htmleaf-container">
-				<header class="htmleaf-header">
-					<Row class="flex-box">
-						<div class="box">
-							<div class="inline-flex">
-								<div style="margin:15px 0;font-weight: bold;">实际付款金额：
-									<i-input v-model="money" number
-										style="width:300px;" placeholder="实际付款的金额" /></div>
-								<h2 style="text-align:center;margin:0 130px 10px 0;">每人点单金额</h2>
-					<span class="input input--kaede" v-for='(item,index) in people_list' :key='index + "num"'>
-						<input  v-model="item.money" placeholder="每人点单金额，没点不需要填" class="input__field input__field--kaede" type="text" :id="forid(index)" />
-						<label class="input__label input__label--kaede" :for="forid(index)">
-							<span class="input__label-content input__label-content--kaede">{{item.name}}</span>
-						</label>
-							<i-button style="position: absolute;right: 5px;top: 4px;" type="error" @click='remove(index)'>删除</i-button>
-						</span>
-								<div style="display:flex;margin-bottom:30px; justify-content: center; align-items: center;">
-									<b style="flex:none;color:#6A7989;">新增成员：</b><i-input type="text" v-model='add_name' ></i-input>
-									&nbsp;&nbsp;<i-button type="primary" @click='add_people'>+</i-button>
-								</div>
-								<div class="btn" @click="new_shouqian">收钱</div>
+	<div id="app"  v-cloak>
+		<div class="htmleaf-container">
+			<header class="htmleaf-header">
+				<Row class="flex-box">
+					<div class="box">
+						<div class="inline-flex">
+							<div style="margin:15px 0;font-weight: bold;">实际付款金额：
+								<i-input v-model="money" number
+									style="width:300px;" placeholder="实际付款的金额" /></div>
+							<h2 style="text-align:center;margin:0 130px 10px 0;">每人点单金额</h2>
+				<span class="input input--kaede" v-for='(item,index) in people_list' :key='index + "num"'>
+					<input  v-model="item.money" placeholder="每人点单金额，没点不需要填" class="input__field input__field--kaede" type="text" :id="forid(index)" />
+					<label class="input__label input__label--kaede" :for="forid(index)">
+						<span class="input__label-content input__label-content--kaede">{{item.name}}</span>
+					</label>
+						<i-button style="position: absolute;right: 5px;top: 4px;" type="error" @click='remove_btn(index)'>删除</i-button>
+					</span>
+							<div style="display:flex;margin-bottom:30px; justify-content: center; align-items: center;">
+								<b style="flex:none;color:#6A7989;">新增成员：</b><i-input type="text" v-model='add_name' ></i-input>
+								&nbsp;&nbsp;<i-button type="primary" @click='add_people_btn'>+</i-button>
 							</div>
-						</div>
-					</Row>
-					<div v-if="shouqianma" style="margin-top:30px;" class="shouqian">
-						<div class="flexbox">
-							<div class="flexitem" v-for="item in collect_name" :key="item + 'name'">{{item}}</div>
-						</div>
-						<div class="flexbox">
-							<div class="flexitem" v-for="(item,index) in collect" :key="index + 'money'">{{item}}
-							</div>
+							<div class="btn" @click="new_shouqian">收钱</div>
 						</div>
 					</div>
-				</header>
+				</Row>
+				<div v-if="shouqianma" style="margin-top:30px;" class="shouqian">
+					<div class="flexbox">
+						<div class="flexitem" v-for="item in collect_name" :key="item + 'name'">{{item}}</div>
+					</div>
+					<div class="flexbox">
+						<div class="flexitem" v-for="(item,index) in collect" :key="index + 'money'">{{item}}
+						</div>
+					</div>
+				</div>
+			</header>
+		</div>
+		<Modal v-model="modal1" footer-hide width='200px'>
+			<div style="color: #000;padding-top: 20px;">
+				请输入暗号：<i-input v-model="anhao1" number
+				placeholder="暗号"></i-input>
+				<i-button type="primary" @click='remove'>确定</i-button>
+				<div v-if='anhao1_text'>又想捣乱？</div>
 			</div>
+		</Modal>
+		<Modal v-model="modal2" footer-hide width='200px'>
+			<div style="color: #000;padding-top: 20px;">
+				请输入暗号：<i-input v-model="anhao2" number
+				placeholder="暗号"></i-input>
+				<i-button type="primary" @click='add_people'>确定</i-button>
+				<div v-if='anhao2_text'>又想捣乱？</div>
+			</div>
+		</Modal>
 	</div>
 	<script>
 		document.onreadystatechange = completeLoading;
@@ -760,6 +774,14 @@
 			new Vue({
 				el: '#app',
 				data: {
+					anhao1_num:0,
+					anhao2_num:0,
+					anhao1_text:false,
+					anhao2_text:false,
+					anhao1:'',
+					anhao2:'',
+					modal1:false,
+					modal2:false,
 					people_list:[],
 					people_name:[],
 					add_name:'',
@@ -798,12 +820,14 @@
 					forid (id) {
 						return "input-" + id
 					},
-					remove (index) {
-						this.$Modal.confirm({
-							title: '确定要删除吗？',
-							onOk: () => {
-								this.people_name.splice(index,1)
-								this.people_list.splice(index,1)
+					remove_btn(index){
+						this.modal1 = true
+						this.anhao1_num = index
+					},
+					remove () {
+						if(Number(this.anhao1) === 1232580){
+							this.people_name.splice(this.anhao1_num,1)
+								this.people_list.splice(this.anhao1_num,1)
 								send = this.people_name.join(',')
 								axios({
 									method:'get',
@@ -812,35 +836,44 @@
 										editor:send
 									}
 								}).then(res => {
-									console.log(res.config)
-								})
-							}
-						})
-					},
-					add_people () {
-						if(this.add_name !== ''){
-								this.$Modal.confirm({
-									title: '确定添加吗？',
-									onOk: () => {
-										this.people_name.push(this.add_name)
-										this.people_list.push({
-											name:this.add_name,
-											money:''
-										})
-										send = this.people_name.join(',')
-										axios({
-											method:'get',
-											url:'collect.php',
-											params:{
-												editor:send
-											}
-										}).then(res => {
-											this.add_name = ''
-										})
-									}
+									this.modal1 = false
+									this.anhao1_text = false
+									this.anhao1 = ''
 								})
 						} else {
+							this.anhao1_text = true
+							this.anhao1 = ''
+						}
+					},
+					add_people_btn () {
+						if(this.add_name !== ''){
+							this.modal2 = true
+						} else {
 							this.$Message.error('请输入新增成员姓名')
+						}
+					},
+					add_people () {
+						if(Number(this.anhao2) === 1232580){
+							this.people_name.push(this.add_name)
+							this.people_list.push({
+								name:this.add_name,
+								money:''
+							})
+							send = this.people_name.join(',')
+							axios({
+								method:'get',
+								url:'collect.php',
+								params:{
+									editor:send
+								}
+							}).then(res => {
+								this.add_name = ''
+								this.modal2 = false
+								this.anhao2 = ''
+							})
+						}  else {
+							this.anhao2_text = true
+							this.anhao2 = ''
 						}
 					},	
 					new_shouqian() {
